@@ -28,3 +28,5 @@ Upon release the pi-traffic-lights program (Cross Walk in the USA, Pedestrian Cr
 Initiates the following sequence: Green Off, RED/Amber On and all of the combi LED ON giving a White light to pedestrians plus a screatching Buzzer for ADA. Halfway through the CrossWalk sequence the White "Walk" Signal changes to a flashing Red "Hurry Up" Signal - need to see if the Buzzer frequency changes for ADA.
 
 Ultimately the Crossing is closed and the Traffic Lights return from Red to Green (USA) or RED/Red/Amber/Green (Scotland)
+
+Introduced some very simple argv processing up fron --usa put the code into the USA locale while any other parameter such as --scotland put it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently.
