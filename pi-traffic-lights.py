@@ -6,7 +6,18 @@ import RPi.GPIO as GPIO
 import time # for sleep functions
 
 from signal import signal, SIGINT # for Cntrl-C
-from sys import exit
+from sys import exit, argv
+
+# process argv according to https://realpython.com/python-command-line-arguments/
+print(argv[0]) # file name
+
+# assume we are in the USA Locale - Cross Walk not Pedistrian Crossing
+locale = True
+
+if (len(argv) == 2):
+	print(argv[1])
+	if (argv[1] != "--usa"):
+		locale = False
 
 # define the GPIO port for the Button
 button = 16
@@ -110,9 +121,8 @@ def WalkSignal(transition_time, locale_usa):
 	GPIO.output(combi_green, GPIO.HIGH)
 
     for i in range(1, transition_time):
-	beep(0.5)
+	beep(0.1)
   	time.sleep(0.5)
-
 
 def EndWalkSignal(transition_time, locale_usa):
     # Shut of the walk signal
@@ -123,13 +133,13 @@ def EndWalkSignal(transition_time, locale_usa):
     if  (locale_usa):
 	for i in range(1, transition_time):
 	   GPIO.output(combi_red, GPIO.HIGH)
-	   beep(0.5)
+	   beep(0.2)
 	   GPIO.output(combi_red, GPIO.LOW)
 	   time.sleep(0.5)
     else:
         GPIO.output(combi_green, GPIO.HIGH)
 	for i in range(1, transition_time):
-	    beep(0.5)
+	    beep(0.2)
             time.sleep(0.5)
 
 	GPIO.output(combi_red, GPIO.HIGH)
@@ -149,11 +159,11 @@ while True:
 
     CarToPedestrian(5)
 
-    WalkSignal(10, True)
+    WalkSignal(10, locale)
 
-    EndWalkSignal(10, True)
+    EndWalkSignal(10, locale)
 
-    PedestrianToCar(5, True)
+    PedestrianToCar(5, locale)
   
   # update prev_input value 
   previous_input = input
