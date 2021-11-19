@@ -30,3 +30,11 @@ Initiates the following sequence: Green Off, RED/Amber On and all of the combi L
 Ultimately the Crossing is closed and the Traffic Lights return from Red to Green (USA) or RED/Red/Amber/Green (Scotland)
 
 Introduced some very simple argv processing up fron --usa put the code into the USA locale while any other parameter such as --scotland put it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently.
+
+# Add SQLite
+This is still work in progress but following this tutorial to get SQLite running on the PI
+https://pimylifeup.com/raspberry-pi-sqlite/
+
+# Advanced Work: Graphana to displat SQLite data
+Still no links for this just placing a holding patern.
+https://grafana.com/tutorials/install-grafana-on-raspberry-pi/
