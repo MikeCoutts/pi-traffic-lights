@@ -62,9 +62,6 @@ def CntrlCHandler(signal_received, frame):
     connection.close() # to close out Sqlite3
     exit(0)
 
-# setup the Cntrl-C handler
-signal(SIGINT, CntrlCHandler)
-
 def InitializeGPIO():
     # Initialize the GPIO Infrastructure to BCM (Broadcom SOC channel)
     GPIO.setmode(GPIO.BCM)
@@ -88,6 +85,14 @@ def InitializeCrossWalk():
     GPIO.output(combi_blue, GPIO.LOW)
     GPIO.output(combi_green, GPIO.LOW)
     GPIO.output(buzzer, GPIO.LOW)
+
+def getMAC(interface='eth0'):
+  # Return the MAC address of the specified interface
+  try:
+    str = open('/sys/class/net/%s/address' %interface).read()
+  except:
+    str = "00:00:00:00:00:00"
+  return str[0:17]
 
 # Setup the Sqlite3 connection and curosr to pi-traffic-lights.db
 connection = sqlite3.connect('pi-traffic-lights.db')
@@ -168,8 +173,10 @@ def EndWalkSignal(transition_time, locale_usa):
         GPIO.output(combi_green, GPIO.LOW)
 
 # Main Program
+signal(SIGINT, CntrlCHandler)
 InitializeGPIO()
 InitializeCrossWalk()
+pi_id = getMAC('wlan0')
 
 # infinate loop for the main thread (Use Cntrl-C to exit)
 while True:
@@ -178,11 +185,11 @@ while True:
  
   # if the last reading was high and this one is low, signal Button Released
   if ((previous_input) and not input):
-    print("Button Released")
+    currentDateTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print("Button Released at", currentDateTime)
 
     # and update the database
-    currentDateTime = datetime.now().strftime("%B %d, %Y %I:%M%p")
-    cursor.execute('INSERT INTO button_pressed VALUES(?)', (currentDateTime,))
+    cursor.execute('INSERT INTO button_pressed VALUES(?,?)', (pi_id, currentDateTime,))
     connection.commit()
 
     CarToPedestrian(5)
