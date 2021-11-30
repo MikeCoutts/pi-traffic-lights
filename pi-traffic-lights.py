@@ -130,7 +130,7 @@ def PedestrianToCar(transition_time, locale_usa):
     # return the crossing to Cars ("Proceed if safe to do so")
     GPIO.output(green, GPIO.HIGH)
 
-def beep(duration):
+def Beep(duration):
     if (beep == True):
         GPIO.output(buzzer, GPIO.HIGH)
 
@@ -148,8 +148,8 @@ def WalkSignal(transition_time, locale_usa):
         GPIO.output(combi_green, GPIO.HIGH)
 
     for i in range(1, transition_time):
-        beep(0.1)
-        beep(0.5)
+        Beep(0.1)
+        time.sleep(0.5)
 
 def EndWalkSignal(transition_time, locale_usa):
     # Shut of the walk signal
@@ -160,13 +160,13 @@ def EndWalkSignal(transition_time, locale_usa):
     if  (locale_usa):
         for i in range(1, transition_time):
            GPIO.output(combi_red, GPIO.HIGH)
-           beep(0.2)
+           Beep(0.2)
            GPIO.output(combi_red, GPIO.LOW)
            time.sleep(0.5)
     else:
         GPIO.output(combi_green, GPIO.HIGH)
         for i in range(1, transition_time):
-            beep(0.2)
+            Beep(0.2)
             time.sleep(0.5)
 
         GPIO.output(combi_red, GPIO.HIGH)
