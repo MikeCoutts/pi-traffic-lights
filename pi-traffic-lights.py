@@ -183,7 +183,7 @@ pi_id = getMAC('wlan0')
 # infinite loop for the main thread (Use Cntrl-C to exit)
 while True:
   # take a reading from the switch
-  input = GPIO.input(button)
+  input = GPIO.input(BUTTON)
  
   # if the last reading was high and this one is low, signal Button Released
   if ((previous_input) and not input):
