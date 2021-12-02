@@ -19,7 +19,7 @@ locale_usa = True
 # assume we want the beep On (as it's really loud when you are developing we can turn it off with the --no_beep argument)
 beep = True
 
-# check for any Command Line Argument (this is really bad "Hard Coding")
+# check for any Command Line Arguments (this is really bad "Hard Coding")
 if (len(argv) >= 2):
     print(argv[1])
     if (argv[1] == "--scotland"):
@@ -35,20 +35,20 @@ if (len(argv) == 3):
         beep = False
 
 # define the GPIO port for the Button
-button = 16
+BUTTON = 16
 
 # define the GPIO ports for the Traffic Lights
-green = 26
-amber = 19
-red = 13
+GREEN = 26
+AMBER = 19
+RED = 13
 
 # define the GPIO ports for the Cross Walk/Pedistrian Signal 
-combi_red = 22
-combi_green = 27
-combi_blue = 17
+COMBI_RED = 22
+COMBI_GREEN = 27
+COMBI_BLUE = 17
 
 # define the GPIO port for the Buzzer Activation
-buzzer = 23
+BUZZER = 23
 
 #initialise previous_input variable to 0 (assume button not pressed on startup) and Pedistrian Crossing as false
 previous_input = 0
@@ -67,25 +67,26 @@ def InitializeGPIO():
     GPIO.setmode(GPIO.BCM)
 
     # Setup all the Input and Output GPIO Pins
-    GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 16 (button) to be an input pin and set initial value to be pulled low (off)
-    GPIO.setup(red, GPIO.OUT)
-    GPIO.setup(green, GPIO.OUT) 
-    GPIO.setup(amber, GPIO.OUT)
-    GPIO.setup(combi_red, GPIO.OUT)
-    GPIO.setup(combi_green, GPIO.OUT)
-    GPIO.setup(combi_blue, GPIO.OUT) 
-    GPIO.setup(buzzer, GPIO.OUT)
+    GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) # Set pin 16 (button) to be an input pin and set initial value to be pulled low (off)
+    GPIO.setup(RED, GPIO.OUT)
+    GPIO.setup(GREEN, GPIO.OUT) 
+    GPIO.setup(AMBER, GPIO.OUT)
+    GPIO.setup(COMBI_RED, GPIO.OUT)
+    GPIO.setup(COMBI_GREEN, GPIO.OUT)
+    GPIO.setup(COMBI_BLUE, GPIO.OUT) 
+    GPIO.setup(BUZZER, GPIO.OUT)
 
 # turn on the Green Light and red cross walk light, Assume the Cross-Walk is Cars allowed through.
 def InitializeCrossWalk():
-    GPIO.output(green, GPIO.HIGH)
-    GPIO.output(amber, GPIO.LOW)
-    GPIO.output(red, GPIO.LOW)
-    GPIO.output(combi_red, GPIO.HIGH)
-    GPIO.output(combi_blue, GPIO.LOW)
-    GPIO.output(combi_green, GPIO.LOW)
-    GPIO.output(buzzer, GPIO.LOW)
+    GPIO.output(GREEN, GPIO.HIGH)
+    GPIO.output(AMBER, GPIO.LOW)
+    GPIO.output(RED, GPIO.LOW)
+    GPIO.output(COMBI_RED, GPIO.HIGH)
+    GPIO.output(COMBI_BLUE, GPIO.LOW)
+    GPIO.output(COMBI_GREEN, GPIO.LOW)
+    GPIO.output(BUZZER, GPIO.LOW)
 
+# Get the Unique MAC address of this Raspberry Pi for a given Network Interface
 def getMAC(interface='eth0'):
   # Return the MAC address of the specified interface
   try:
@@ -100,52 +101,52 @@ cursor = connection.cursor()
 
 # Use a function to control the Car to Pedestrian Transition 
 def CarToPedestrian(transition_time):
-    GPIO.output(green, GPIO.LOW)
-    GPIO.output(amber, GPIO.HIGH)
+    GPIO.output(GREEN, GPIO.LOW)
+    GPIO.output(AMBER, GPIO.HIGH)
 
     time.sleep(transition_time) # sleep between Green/Amber/Red
 
-    GPIO.output(amber, GPIO.LOW)
-    GPIO.output(red, GPIO.HIGH)
+    GPIO.output(AMBER, GPIO.LOW)
+    GPIO.output(RED, GPIO.HIGH)
 
 # Use a function to control the Pedestrian to Car transition
 def PedestrianToCar(transition_time, locale_usa):
-    GPIO.output(combi_red, GPIO.HIGH) # Red Do Not Walk signal to Pedestrians
+    GPIO.output(COMBI_RED, GPIO.HIGH) # Red Do Not Walk signal to Pedestrians
     
     # As the USA and Scotland return to car sequence is different we need to decide
     if locale_usa:
         time.sleep(transition_time) 
-        GPIO.output(red, GPIO.LOW) # Red goes straight to Green in the USA
+        GPIO.output(RED, GPIO.LOW) # Red goes straight to Green in the USA
     else:
-        GPIO.output(amber, GPIO.HIGH) # and hold for transition_time
+        GPIO.output(AMBER, GPIO.HIGH) # and hold for transition_time
 
         # Scotland Sequence is a little different with Red/Amber on Prior to flip to Green
-        GPIO.output(amber, GPIO.HIGH)
+        GPIO.output(AMBER, GPIO.HIGH)
 
         time.sleep(transition_time) # for Scotland Red/Amber ("prepare to proceed")
 
-        GPIO.output(red, GPIO.LOW)
-        GPIO.output(amber, GPIO.LOW)
+        GPIO.output(RED, GPIO.LOW)
+        GPIO.output(AMBER, GPIO.LOW)
 
     # return the crossing to Cars ("Proceed if safe to do so")
-    GPIO.output(green, GPIO.HIGH)
+    GPIO.output(GREEN, GPIO.HIGH)
 
 def Beep(duration):
     if (beep == True):
-        GPIO.output(buzzer, GPIO.HIGH)
+        GPIO.output(BUZZER, GPIO.HIGH)
 
     # sleep whether or not the buzzer is on or not
     time.sleep(duration)
-    GPIO.output(buzzer, GPIO.LOW)
+    GPIO.output(BUZZER, GPIO.LOW)
 
 # use a function to Start and maintain the Walk Signal (White in the USA, Green in Scotland with an intermitent "beep')
 def WalkSignal(transition_time, locale_usa):
-    if (locale_usa):
-        GPIO.output(combi_red, GPIO.HIGH)
-        GPIO.output(combi_blue, GPIO.HIGH)
-        GPIO.output(combi_green, GPIO.HIGH)
-    else:
-        GPIO.output(combi_green, GPIO.HIGH)
+    if (locale_usa): # USA Walk signal is solid white (R+B+G)
+        GPIO.output(COMBI_RED, GPIO.HIGH)
+        GPIO.output(COMBI_BLUE, GPIO.HIGH)
+        GPIO.output(COMBI_GREEN, GPIO.HIGH)
+    else: # Scotland Pedestrian Crossing signal is Green
+        GPIO.output(COMBI_GREEN, GPIO.HIGH)
 
     for i in range(1, transition_time):
         Beep(0.1)
@@ -153,24 +154,25 @@ def WalkSignal(transition_time, locale_usa):
 
 def EndWalkSignal(transition_time, locale_usa):
     # Shut of the walk signal
-    GPIO.output(combi_red, GPIO.LOW)
-    GPIO.output(combi_blue, GPIO.LOW)
-    GPIO.output(combi_green, GPIO.LOW)
+    GPIO.output(COMBI_RED, GPIO.LOW)
+    GPIO.output(COMBI_BLUE, GPIO.LOW)
+    GPIO.output(COMBI_GREEN, GPIO.LOW)
 
     if  (locale_usa):
         for i in range(1, transition_time):
-           GPIO.output(combi_red, GPIO.HIGH)
+           GPIO.output(COMBI_RED, GPIO.HIGH)
            Beep(0.2)
-           GPIO.output(combi_red, GPIO.LOW)
+           GPIO.output(COMBI_RED, GPIO.LOW)
            time.sleep(0.5)
-    else:
-        GPIO.output(combi_green, GPIO.HIGH)
+    else: # Scotland leaves the Green Light on throughout but good to change the Beep Frequency
+        GPIO.output(COMBI_GREEN, GPIO.HIGH)
         for i in range(1, transition_time):
             Beep(0.2)
             time.sleep(0.5)
-
-        GPIO.output(combi_red, GPIO.HIGH)
-        GPIO.output(combi_green, GPIO.LOW)
+            
+        # When done Turn off Green and Trun on Red 
+        GPIO.output(COMBI_GREEN, GPIO.LOW)
+        GPIO.output(COMBI_RED, GPIO.HIGH)
 
 # Main Program
 signal(SIGINT, CntrlCHandler)
@@ -178,7 +180,7 @@ InitializeGPIO()
 InitializeCrossWalk()
 pi_id = getMAC('wlan0')
 
-# infinate loop for the main thread (Use Cntrl-C to exit)
+# infinite loop for the main thread (Use Cntrl-C to exit)
 while True:
   # take a reading from the switch
   input = GPIO.input(button)
