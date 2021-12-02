@@ -7,7 +7,7 @@ On detection of the trailing edge (as the switch is released) change the state o
 
 Change the state of a GPIO Output pin that drives a Buzzer via direct input from a GPIO pin to Ground.
 
-![Alt text](https://github.com/MikeCoutts/pi-simple-switch/blob/main/images/IMG_20211103_225959778.jpg?raw=true "Traffic Lights")
+![Alt text](https://github.com/MikeCoutts/pi-traffic-light/blob/main/images/IMG_20211103_225959778.jpg?raw=true "Traffic Lights")
 
 # Simple Raspberry Pi Bread Board wiring for this project
 [Buzzer](https://www.amazon.com/dp/B07S85WRSZ?psc=1&ref=ppx_yo2_dt_b_product_details) ground on 5V GND line with +ve into GPIO 23
