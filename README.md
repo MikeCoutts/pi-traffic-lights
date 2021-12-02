@@ -1,5 +1,5 @@
 # pi-traffic-lights
-A simple Rapberry PI Python example of the Traffic Lights project with added Buzzer and Analytics as STEM for Kids
+A simple Raspberry PI Python example of the Traffic Lights project with added Buzzer and Analytics as STEM for Kids
 
 Read the status of a momentary switch on GPIO Pin 16 (note the use of a Blue LED in place of a 10k Ohm Pull down resistor)
 
@@ -9,7 +9,7 @@ Change the state of a GPIO Output pin that drives a Buzzer via direct input from
 
 ![Alt text](https://github.com/MikeCoutts/pi-simple-switch/blob/main/images/IMG_20211103_225959778.jpg?raw=true "Traffic Lights")
 
-# Simple Rasbpery Pi Bread Board wiring for this project
+# Simple Raspberry Pi Bread Board wiring for this project
 [Buzzer](https://www.amazon.com/dp/B07S85WRSZ?psc=1&ref=ppx_yo2_dt_b_product_details) ground on 5V GND line with +ve into GPIO 23
 
 Blue LED (GPIO 17), Green LED (GPIO 23) and Red LED (GPIO 22) connected to the White LED BGR Anodes via 10K Ohm Resitors with Cathode to Ground.
