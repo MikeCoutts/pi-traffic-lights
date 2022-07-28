@@ -29,4 +29,4 @@ Initiates the following sequence: Green Off, RED/Amber On and all of the combi L
 
 Ultimately the Crossing is closed and the Traffic Lights return from Red to Green (USA) or RED/Red/Amber/Green (Scotland)
 
-Introduced some very simple argv processing up fron --usa put the code into the USA locale while any other parameter such as --scotland put it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently.
+Introduced some very simple argv processing up front. Be default the code is in the USA locale while the --scotland parameter puts it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently. --no_beep turns off the Beeper (handy for Debugging as it is really loud). --zero_transition allows you to quickly generate data in the SQLite3 database while still exercising the whole code loop (just with sleep(0) at each point where we would normally have a delay). --database sqlite3.df filename lets you specify a different SQite2 Database (default is pi-traffic-lights.db).
