@@ -1,4 +1,4 @@
-# Copyright The Kavinjka Software Company 2021
+# Copyright The Kavinjka Software Company 2021-2022
 #
 # Author MikeC@kavinjka.com
 
@@ -9,6 +9,7 @@ import sqlite3 # for storing Button Pushes
 from signal import signal, SIGINT # for Cntrl-C
 from sys import exit, argv
 from datetime import datetime
+import requests # for REST external access
 
 # process argv according to https://realpython.com/python-command-line-arguments/
 print(argv[0]) # file name
@@ -22,6 +23,9 @@ beep = True
 # use a database_file variable in case we ever want to change it
 database_file = 'pi-traffic-lights.db'
 
+# define a transition time variable so we can run the code very quickly
+transition_time = 1 # 1 second
+
 # check for any Command Line Arguments (this is a little better)
 for i in range(1, len(argv)): # ignore argv[0] as it is the file name
     print(argv[i])
@@ -29,7 +33,9 @@ for i in range(1, len(argv)): # ignore argv[0] as it is the file name
         locale_usa = False
     if (argv[i] == "--no_beep"):
         beep = False
-    if (argv[i] == '--database'): # technically has to be last  pair of argv elements
+    if (argv[i] == "--zero_transition"):
+        transition_time = 0
+    if (argv[i] == '--database'): # technically has to be last pair of argv elements
         database_file = argv[i+1]
 
 # define the GPIO port for the Button
@@ -100,7 +106,7 @@ cursor = connection.cursor()
 # Use a function to control the Car to Pedestrian Transition
 def car_to_pedestrian(transition_time):
     # Add a short sleep so there is time from the button release to the start of the transition
-    time.sleep(1)
+    time.sleep(transition_time)
 
     # Transition from Green to Amber
     GPIO.output(GREEN, GPIO.LOW)
@@ -114,13 +120,13 @@ def car_to_pedestrian(transition_time):
     GPIO.output(RED, GPIO.HIGH)
 
     # Add a short sleep to let the Red to Car drivers be in place
-    time.sleep(1)
+    time.sleep(transition_time)
 
 # Use a function to control the Pedestrian to Car transition
 def pedestrian_to_car(transition_time, locale_usa):
     GPIO.output(COMBI_RED, GPIO.HIGH) # Red Do Not Walk signal to Pedestrians
     # Add a short sleep  after Pedistian signal goes Red before moving on
-    time.sleep(1)
+    time.sleep(transition_time)
 
     # As the USA and Scotland return to car sequence is different we need to decide
     if locale_usa:
@@ -128,7 +134,7 @@ def pedestrian_to_car(transition_time, locale_usa):
         GPIO.output(RED, GPIO.LOW) # Red goes straight to Green in the USA
     else:
         # Add a small sleep before tranitioning to Red/Amber
-        time.sleep(1)
+        time.sleep(transition_time)
 
         GPIO.output(AMBER, GPIO.HIGH) # and hold for transition_time
 
@@ -199,20 +205,30 @@ while True:
 
   # if the last reading was high and this one is low, signal Button Released
   if ((previous_input) and not input):
-    current_date_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    current_date_time = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ") # Proper ISO8601 Timestamp
     print("Button Released at", current_date_time)
 
     # Update the database
     cursor.execute('INSERT INTO button_pressed VALUES(?,?,?,?)', (pi_id, current_date_time, locale_usa, beep))
     connection.commit()
 
-    car_to_pedestrian(5)
+    # send out ButtonPressed data to AWS API Gateway / Server Proxy to DynamoDB
+    remote_api_url = "https://wbf4yrz1ui.execute-api.us-east-2.amazonaws.com/v1/button_presses"
+    data = {"dateTime": current_date_time, "piId": pi_id, "usa": locale_usa, "beep": beep}
+ 
+    # Send the json=data to the remote_api_url 
+    response = requests.post(remote_api_url, json=data)
+    print("Status code = ", response.status_code)
+    print(response.json())
+    
+    # Run the Traffic Lights Sequence
+    car_to_pedestrian(5 * transition_time)
 
-    walk_signal(10, locale_usa)
+    walk_signal(10 * transition_time, locale_usa)
 
-    end_walk_signal(10, locale_usa)
+    end_walk_signal(10 * transition_time, locale_usa)
 
-    pedestrian_to_car(5, locale_usa)
+    pedestrian_to_car(5 * transition_time, locale_usa)
 
   # update prev_input value
   previous_input = input
