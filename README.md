@@ -7,7 +7,7 @@ On detection of the trailing edge (as the switch is released) change the state o
 
 Change the state of a GPIO Output pin that drives a Buzzer via direct input from a GPIO pin to Ground.
 
-![Alt text](https://github.com/MikeCoutts/pi-traffic-lights/blob/main/images/IMG_20211103_225959778.jpg?raw=true "Traffic Lights")
+![Alt text](https://github.com/MikeCoutts/pi-traffic-lights/blob/main/images/STEM-101-BreadBoard.jpg?raw=true "Traffic Lights")
 
 # Simple Raspberry Pi Bread Board wiring for this project
 [Buzzer](https://www.amazon.com/dp/B07S85WRSZ?psc=1&ref=ppx_yo2_dt_b_product_details) ground on 5V GND line with +ve into GPIO 23
@@ -29,4 +29,4 @@ Initiates the following sequence: Green Off, RED/Amber On and all of the combi L
 
 Ultimately the Crossing is closed and the Traffic Lights return from Red to Green (USA) or RED/Red/Amber/Green (Scotland)
 
-Introduced some very simple argv processing up fron --usa put the code into the USA locale while any other parameter such as --scotland put it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently.
+Introduced some very simple argv processing up front. Be default the code is in the USA locale while the --scotland parameter puts it into the UK/Scottish locale where the CrossWalk / Pedistrian Crossing light work slightly differently. --no_beep turns off the Beeper (handy for Debugging as it is really loud). --zero_transition allows you to quickly generate data in the SQLite3 database while still exercising the whole code loop (just with sleep(0) at each point where we would normally have a delay). --database sqlite3.df filename lets you specify a different SQLite3 Database (default is pi-traffic-lights.db).
