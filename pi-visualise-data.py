@@ -31,15 +31,14 @@ c = alt.Chart(df).transform_fold( # fold USA/Beep into a single "value" column
 ).mark_bar().encode(
      x=alt.X('pressed_on:T', timeUnit='date'), # X Axis is a day based time parameter 
      y='value:Q', # Y Axis is the combined USA/Beep Value stack as a Quantatative param
+     color='column:N')
 
 # Get the earliest and latest date available in the data set
-earliestDate = pd.read_sql("SELECT MIN(pressed_on)
-                as EarliestDate from button_pressed", con=conn)
-latestDate = pd.read_sql("SELECT MAX(pressed_on)
-                  as LatestDate from button_pressed", con=conn)
-st.write("Chart from ", 
-         earliestDate.EarliestDate[0], "to ", 
-         latestDate.LatestDate[0])
+#earliestDate = pd.read_sql("SELECT MIN(pressed_on) as EarliestDate from button_pressed", con=conn)
+#latestDate = pd.read_sql("SELECT MAX(pressed_on) as LatestDate from button_pressed", con=conn)
+#st.write("Chart from ", 
+#         earliestDate.EarliestDate[0], "to ", 
+#         latestDate.LatestDate[0])
 
 # Create a SQLite3 query for the whole stream of data
 allDataQuery = "SELECT * from button_pressed"
@@ -73,16 +72,5 @@ st.write("DataFrame for ", date.strftime("%Y-%m-%d"))
 # And output the dateBased Data Frame
 st.write(dateBasedDF)
 
-# Create a SQLite3 query for all the data for a specific day
-dateBasedQuery = "SELECT * from button_pressed
-                  where pressed_on LIKE
-                  '" + date.strftime("%Y-%m-%d%") + "'"
-
-# Create a 2nd Pandas DataFrame for the selected date only
-dateBasedData = pd.read_sql(dateBasedQuery, con=conn)
-
-st.write("DataFrame for ", date.strftime("%Y-%m-%d"))
-st.write(dateBasedData)
-
-# close off the connection to sqlite3
+# close off the connection to sqlite
 conn.close()
