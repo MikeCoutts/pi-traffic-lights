@@ -222,8 +222,8 @@ while True:
         response = requests.post(remote_api_url, json=data)
         print("Status code = ", response.status_code)
         print(response.json())
-    except NewConnectionError:
-        print("NewConnectionError")
+    except except socket.gaierror as e:
+        print("Error log", socket.gaierror)
         
     # Run the Traffic Lights Sequence
     car_to_pedestrian(5 * transition_time)
