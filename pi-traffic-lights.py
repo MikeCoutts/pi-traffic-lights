@@ -217,10 +217,13 @@ while True:
     data = {"dateTime": current_date_time, "piId": pi_id, "usa": locale_usa, "beep": beep}
  
     # Send the json=data to the remote_api_url 
-    response = requests.post(remote_api_url, json=data)
-    print("Status code = ", response.status_code)
-    print(response.json())
-    
+    try:
+        response = requests.post(remote_api_url, json=data)
+        print("Status code = ", response.status_code)
+        print(response.json())
+    except NewConnectionError:
+        print("NewConnectionError")
+        
     # Run the Traffic Lights Sequence
     car_to_pedestrian(5 * transition_time)
 
