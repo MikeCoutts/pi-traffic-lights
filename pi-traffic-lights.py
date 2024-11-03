@@ -10,7 +10,7 @@ from signal import signal, SIGINT # for Cntrl-C
 from sys import exit, argv
 from datetime import datetime
 import requests # for REST external access
-from urllib3.exceptions import NewConnectionError
+from socket import gaierror
 
 # process argv according to https://realpython.com/python-command-line-arguments/
 print(argv[0]) # file name
@@ -222,7 +222,7 @@ while True:
         response = requests.post(remote_api_url, json=data)
         print("Status code = ", response.status_code)
         print(response.json())
-    except socket.gaierror as e:
+    except gaierror as e:
         print("Error log", socket.gaierror)
         
     # Run the Traffic Lights Sequence
