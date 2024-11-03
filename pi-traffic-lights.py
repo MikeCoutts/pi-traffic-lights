@@ -10,6 +10,7 @@ from signal import signal, SIGINT # for Cntrl-C
 from sys import exit, argv
 from datetime import datetime
 import requests # for REST external access
+from urllib3.exceptions import NewConnectionError
 
 # process argv according to https://realpython.com/python-command-line-arguments/
 print(argv[0]) # file name
